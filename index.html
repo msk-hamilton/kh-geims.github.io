@@ -1,55 +1,729 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
-<title>Spanish Class Games</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="googlebot" content="noindex, nofollow">
+<title>Hangul Block Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F3F6FB; --surface:#FFFFFF; --ink:#14284B; --muted:#55657F; --line:#D3DCEA;
-  --cobalt:#1D4E89; --on-cobalt:#FFFFFF; --saffron:#F2B705; --on-saffron:#2A1E00;
-  --display:"Baloo 2","Trebuchet MS","Segoe UI",system-ui,sans-serif;
-  --body:"Atkinson Hyperlegible","Verdana","Segoe UI",system-ui,sans-serif;
-  color-scheme:light; box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  --sky-top:#47a6ff; --sky-bot:#c4e8ff; --cloud:#ffffff;
+  --grass:#5fb43f; --grass-dark:#3f8a2b; --dirt:#8a5a34; --dirt-line:rgba(0,0,0,.2);
+  --panel:#101a33; --panel-2:#18264d; --ink:#f4f7ff; --ink-dim:#a9b6d6; --edge:#0a1020;
+  --c:#43c0ff; --c-deep:#16385f; --v:#ffd43b; --v-deep:#4a3d12; --f:#62e68c; --f-deep:#17402f;
+  --bad:#ff5d6c; --good:#62e68c; --tip:#ffd43b; --btn-ink:#0c1429; --accent:#43c0ff;
+  --ui:'Noto Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --pix:'Pixelify Sans','Noto Sans KR',system-ui,sans-serif;
+  --body:'Noto Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --bg:#0E192C; --surface:#172540; --ink:#EAF0FA; --muted:#A3B4CE; --line:#2A3C5D; --cobalt:#86AEE6; --on-cobalt:#0E192C; color-scheme:dark; }
+  :root:not([data-theme="light"]){
+    --sky-top:#111c45; --sky-bot:#3b4c8c; --cloud:#5a69a6;
+    --grass:#438f2c; --grass-dark:#2d6a1e; --dirt:#5e3d24; --panel:#0c1429; --panel-2:#142041;
+  }
 }
-:root[data-theme="dark"]{ --bg:#0E192C; --surface:#172540; --ink:#EAF0FA; --muted:#A3B4CE; --line:#2A3C5D; --cobalt:#86AEE6; --on-cobalt:#0E192C; color-scheme:dark; }
+:root[data-theme="dark"]{
+  --sky-top:#111c45; --sky-bot:#3b4c8c; --cloud:#5a69a6;
+  --grass:#438f2c; --grass-dark:#2d6a1e; --dirt:#5e3d24; --panel:#0c1429; --panel-2:#142041;
+}
 *,*::before,*::after{box-sizing:inherit}
-body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--body); font-size:1.15rem; line-height:1.5}
-.wrap{max-width:760px; margin:0 auto; padding:2rem clamp(1rem,4vw,2rem) 3rem}
-h1{font-family:var(--display); font-size:clamp(2.2rem,7vw,3.2rem); line-height:1; margin:0}
-.sub{color:var(--muted); margin:.4rem 0 2rem}
-.week{background:var(--surface); border:2px solid var(--line); border-radius:20px; padding:1.25rem 1.5rem; margin-bottom:1rem}
-.week h2{font-family:var(--display); font-size:1.7rem; margin:0; line-height:1.1}
-.week p{margin:.3rem 0 1rem; color:var(--muted)}
-.links{display:flex; flex-wrap:wrap; gap:.75rem}
-a.btn{display:inline-flex; align-items:center; gap:.5rem; text-decoration:none; font-weight:700; border-radius:14px; padding:.8rem 1.3rem}
-a.primary{background:var(--cobalt); color:var(--on-cobalt)}
-a.secondary{border:2px solid var(--line); color:var(--ink)}
-a:focus-visible{outline:3px solid var(--saffron); outline-offset:3px}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; min-height:100vh; color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.45;
+  background:linear-gradient(var(--sky-top),var(--sky-bot)) fixed;
+}
+button{font:inherit; color:inherit}
+:focus-visible{outline:4px solid #fff; outline-offset:2px}
+
+/* ---------- world backdrop ---------- */
+.sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+.cloud{
+  position:absolute; width:140px; height:72px;
+  background:
+    linear-gradient(var(--cloud),var(--cloud)) 0 48px/140px 24px no-repeat,
+    linear-gradient(var(--cloud),var(--cloud)) 20px 24px/100px 24px no-repeat,
+    linear-gradient(var(--cloud),var(--cloud)) 44px 0/48px 24px no-repeat;
+}
+.island{
+  position:absolute; width:190px; height:100px;
+  background:linear-gradient(var(--grass) 0 24%, var(--grass-dark) 24% 30%, var(--dirt) 30% 100%);
+  clip-path:polygon(0 0,100% 0,100% 30%,88% 30%,88% 55%,70% 55%,70% 78%,50% 78%,50% 100%,30% 100%,30% 70%,12% 70%,12% 42%,0 42%);
+  opacity:.9;
+}
+.ground{
+  position:fixed; left:0; right:0; bottom:0; height:60px; z-index:0; pointer-events:none;
+  background:linear-gradient(var(--grass) 0 14px, var(--grass-dark) 14px 22px, var(--dirt) 22px 100%);
+}
+.ground::after{content:""; position:absolute; inset:22px 0 0 0;
+  background:repeating-linear-gradient(90deg,transparent 0 37px,var(--dirt-line) 37px 38px)}
+
+#app{position:relative; z-index:1; max-width:980px; margin:0 auto; padding:18px 14px 96px}
+
+/* ---------- shared pieces ---------- */
+.panel{
+  background:var(--panel); border:4px solid var(--accent);
+  box-shadow:0 0 0 4px var(--edge), 0 10px 0 4px rgba(0,0,0,.28);
+  padding:22px; margin:8px 4px 26px;
+}
+h1,h2,h3{font-family:var(--ui); margin:0; font-weight:700; line-height:1.05}
+p{margin:0}
+.dim{color:var(--ink-dim)}
+.btn{
+  font-family:var(--ui); font-weight:700; font-size:21px; cursor:pointer;
+  background:var(--accent); color:var(--btn-ink); border:3px solid var(--edge); padding:10px 20px;
+  box-shadow:inset -4px -4px 0 rgba(0,0,0,.25), inset 4px 4px 0 rgba(255,255,255,.4), 0 5px 0 var(--edge);
+  transition:transform .08s, box-shadow .08s;
+}
+.btn:hover{filter:brightness(1.07)}
+.btn:active{transform:translateY(4px); box-shadow:inset -4px -4px 0 rgba(0,0,0,.25), inset 4px 4px 0 rgba(255,255,255,.4), 0 1px 0 var(--edge)}
+.btn.quiet{background:var(--panel-2); color:var(--ink); border-color:var(--edge); font-size:17px; padding:8px 14px}
+.link{background:none; border:0; color:var(--ink-dim); text-decoration:underline; cursor:pointer; font-size:15px; padding:6px}
+.gem{display:inline-block; width:14px; height:14px; background:var(--f); transform:rotate(45deg); border:2px solid var(--edge); margin:0 8px 0 3px; vertical-align:-1px}
+
+/* ---------- title ---------- */
+.hero{text-align:center; --accent:#43c0ff}
+.logo{font-family:var(--pix); font-weight:700; font-size:clamp(44px,10vw,84px); line-height:.95; letter-spacing:1px; text-shadow:0 5px 0 var(--edge), 4px 4px 0 var(--edge), -2px 3px 0 var(--edge)}
+.logo .a{color:#ffd43b; display:block}
+.logo .b{color:#ff5d6c}
+.logo .c{color:#3d9bff}
+.tag{margin-top:14px; font-family:var(--ui); font-size:24px; color:var(--ink)}
+.demo{display:flex; align-items:center; justify-content:center; gap:14px; margin:26px 0 6px; flex-wrap:wrap}
+.demo .op{font-family:var(--ui); font-size:34px; color:var(--ink-dim)}
+.demo .tile.big,.demo .fused{width:92px; height:92px; font-size:54px}
+.snapL{animation:snapL .8s .3s both cubic-bezier(.3,1.5,.5,1)}
+.snapR{animation:snapR .8s .3s both cubic-bezier(.3,1.5,.5,1)}
+.fusedwrap{animation:pop .6s 1.1s both cubic-bezier(.3,1.8,.5,1)}
+@keyframes snapL{from{transform:translateX(-70px);opacity:0}to{transform:none;opacity:1}}
+@keyframes snapR{from{transform:translateX(70px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.demo .rom{font-weight:900; font-family:var(--ui); font-size:28px; color:var(--v)}
+
+.stops{display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); margin-top:12px; text-align:left}
+.stop{
+  display:flex; gap:14px; align-items:center; text-align:left; cursor:pointer;
+  background:var(--panel-2); border:3px solid var(--stop); padding:12px; color:var(--ink);
+  box-shadow:0 4px 0 var(--edge);
+}
+.stop[disabled]{opacity:.45; cursor:not-allowed; border-color:#4b5778}
+.stop:not([disabled]):hover{background:#1d2e5c}
+.stop h3{font-family:var(--pix); font-size:22px; color:var(--stop)}
+.stop p{font-size:15px; color:var(--ink-dim); margin-top:3px}
+.stop .st{font-family:var(--ui); font-size:15px; margin-top:6px}
+.qmini{width:64px; height:64px; flex:none; display:grid; place-items:center; font-family:var(--ui); font-size:34px; color:var(--btn-ink); background:var(--stop); border:3px solid var(--edge); box-shadow:inset -4px -4px 0 rgba(0,0,0,.25), inset 4px 4px 0 rgba(255,255,255,.4)}
+.foot{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:20px}
+
+/* ---------- board and slots ---------- */
+.board{
+  display:grid; gap:6px; width:min(100%,340px); aspect-ratio:1; container-type:size;
+  background:var(--edge); padding:6px; border:3px solid #fff3;
+}
+.board.small{width:150px}
+.board.mini{width:64px; gap:3px; padding:3px; border-width:2px; flex:none}
+.board[data-layout=neighbors]{grid-template-columns:1fr 1fr; grid-template-areas:"c v"}
+.board[data-layout=bunk]{grid-template-rows:1fr 1fr; grid-template-areas:"c" "v"}
+.board[data-layout=basement]{grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; grid-template-areas:"c v" "f f"}
+.board[data-layout=hamburger]{grid-template-rows:1fr 1fr 1fr; grid-template-areas:"c" "v" "f"}
+.slot{
+  appearance:none; border:3px dashed var(--b); background:var(--bd); color:var(--b);
+  display:grid; place-items:center; padding:0; min-width:0; min-height:0; cursor:pointer;
+  font-family:var(--ui); overflow:hidden;
+}
+div.slot{cursor:default}
+.slot.role-c{grid-area:c; --b:var(--c); --bd:var(--c-deep)}
+.slot.role-v{grid-area:v; --b:var(--v); --bd:var(--v-deep)}
+.slot.role-f{grid-area:f; --b:var(--f); --bd:var(--f-deep)}
+.slot.role-l{grid-area:l; --b:var(--v); --bd:var(--v-deep)}
+.slot.role-s{grid-area:s; --b:var(--v); --bd:var(--v-deep)}
+.board[data-layout=corner]{grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; grid-template-areas:"c s" "l s"}
+.board[data-layout=cornerbase]{grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr 1fr; grid-template-areas:"c s" "l s" "f f"}
+.slot .lbl{font-size:max(12px,7cqmin); text-align:center; padding:0 4px; line-height:1.1}
+.slot.filled{
+  border:3px solid var(--edge); background:var(--b); color:var(--btn-ink);
+  box-shadow:inset -5px -5px 0 rgba(0,0,0,.25), inset 5px 5px 0 rgba(255,255,255,.38);
+}
+.slot .j{font-family:var(--body); font-weight:900; font-size:27cqmin; line-height:1}
+.board.small .j{font-size:30cqmin}
+.mini .slot{border-width:2px; border-style:solid; border-color:var(--edge); background:var(--b); box-shadow:inset -3px -3px 0 rgba(0,0,0,.25), inset 3px 3px 0 rgba(255,255,255,.38)}
+.slot.wrong{background:var(--bad); border-color:var(--edge)}
+.slot.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.slot.drop{animation:dropin .7s .6s both cubic-bezier(.3,1.6,.5,1)}
+@keyframes dropin{from{transform:translateY(-140%);opacity:0}to{transform:none;opacity:1}}
+.slot.armed:not(.filled){border-style:solid; background:color-mix(in srgb,var(--b) 25%,var(--bd))}
+.board.good .slot.filled{animation:flash .6s}
+@keyframes flash{50%{filter:brightness(1.35)}}
+
+/* ---------- tiles ---------- */
+.tile{
+  width:58px; height:58px; display:grid; place-items:center; cursor:pointer;
+  font-family:var(--body); font-weight:900; font-size:30px; color:var(--btn-ink);
+  border:3px solid var(--edge); background:var(--b);
+  box-shadow:inset -4px -4px 0 rgba(0,0,0,.25), inset 4px 4px 0 rgba(255,255,255,.38), 0 4px 0 var(--edge);
+  transition:transform .08s;
+}
+.tile.c{--b:var(--c)} .tile.v{--b:var(--v)} .tile.f{--b:var(--f)}
+.tile:hover{transform:translateY(-2px)}
+.tile.sel{transform:translateY(-6px); outline:4px solid #fff; outline-offset:1px}
+.tile.hint{animation:glow 1s infinite alternate}
+@keyframes glow{from{box-shadow:inset -4px -4px 0 rgba(0,0,0,.25), inset 4px 4px 0 rgba(255,255,255,.38), 0 0 0 4px #fff0}to{box-shadow:inset -4px -4px 0 rgba(0,0,0,.25), inset 4px 4px 0 rgba(255,255,255,.38), 0 0 0 6px #fff}}
+.tile.big{width:96px; height:96px; font-size:58px}
+.chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+.chip{font-family:var(--body); font-weight:900; font-size:24px; min-width:42px; text-align:center; padding:2px 8px; color:var(--btn-ink); border:3px solid var(--edge)}
+.chip.v{background:var(--v)}
+
+/* ---------- play screen ---------- */
+.hud{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:16px}
+.hud .lv{font-family:var(--pix); font-size:22px; color:var(--accent); flex:1 1 160px}
+.pills{display:flex; gap:6px; flex:1 1 200px}
+.pill{flex:1; max-width:38px; height:12px; background:#44506b}
+.pill.on{background:var(--accent)}
+.pill.now{outline:3px solid #fff; outline-offset:1px}
+.score{font-family:var(--ui); font-size:21px}
+.task{margin-bottom:14px}
+.task .ask{font-size:19px; color:var(--ink-dim)}
+.task .romtxt{font-weight:900; font-family:var(--ui); font-size:clamp(46px,9vw,68px); color:var(--v); line-height:1; margin-top:2px; text-shadow:0 4px 0 var(--edge)}
+.tip{margin-top:8px; padding:8px 12px; border-left:6px solid var(--tip); background:var(--panel-2); font-size:16px}
+.stage{display:grid; gap:22px; grid-template-columns:1fr; align-items:start}
+@media (min-width:780px){.stage{grid-template-columns:minmax(0,340px) 1fr}}
+.boardwrap{justify-self:center; width:100%; max-width:340px}
+.bank h3{font-size:19px; color:var(--ink-dim); margin:0 0 8px}
+.bank .tiles{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px}
+.msg{margin-top:16px; padding:12px 14px; font-size:18px; border:3px solid var(--edge); min-height:56px; display:flex; align-items:center}
+.msg.bad{background:#4a1c2a; border-color:var(--bad)}
+.msg.good{background:#143a2b; border-color:var(--good)}
+.msg.tip{background:#40380f; border-color:var(--tip)}
+.msg.info{background:var(--panel-2); border-color:#3b4a78; color:var(--ink-dim)}
+.actions{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap}
+details.chart{margin-top:16px; background:var(--panel-2); border:3px solid #3b4a78; padding:8px 12px}
+details.chart summary{cursor:pointer; font-family:var(--ui); font-size:18px}
+.chart .grid{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0}
+.chart .cell{display:flex; gap:6px; align-items:center; background:var(--panel); padding:3px 8px; border:2px solid #3b4a78; font-size:15px}
+.chart .cell b{font-family:var(--body); font-weight:900; font-size:21px}
+.chart .cell.cc b{color:var(--c)} .chart .cell.vv b{color:var(--v)}
+
+.houses{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px}
+.house{display:flex; gap:12px; align-items:center; text-align:left; cursor:pointer; padding:10px; background:var(--panel-2); border:3px solid var(--hc); color:var(--ink); box-shadow:0 4px 0 var(--edge)}
+.house:hover{background:#1d2e5c}
+.house b{font-family:var(--ui); font-size:20px; color:var(--hc); display:block}
+.house span{font-size:14px; color:var(--ink-dim); line-height:1.25; display:block}
+
+.reveal{display:flex; gap:20px; align-items:center; flex-wrap:wrap; margin-top:18px; padding:16px; background:var(--panel-2); border:3px solid var(--good)}
+.reveal .big{
+  width:120px; height:120px; display:grid; place-items:center; flex:none;
+  font-family:var(--body); font-weight:900; font-size:76px; color:var(--btn-ink); background:var(--b,var(--v));
+  border:4px solid var(--edge); box-shadow:inset -7px -7px 0 rgba(0,0,0,.25), inset 7px 7px 0 rgba(255,255,255,.38);
+  animation:pop .5s both cubic-bezier(.3,1.8,.5,1);
+}
+.reveal .rom-big{font-weight:900; font-family:var(--ui); font-size:40px; color:var(--v); line-height:1}
+.reveal .eq{font-size:17px; margin:6px 0}
+.reveal .earn{font-size:16px; color:var(--ink-dim); margin-bottom:12px}
+
+.world h3{font-size:22px; margin-bottom:4px}
+.world .wall{display:flex; flex-wrap:wrap; gap:4px; margin-top:12px}
+.wb{width:34px; height:34px; display:grid; place-items:center; font-family:var(--body); font-weight:900; font-size:19px; color:var(--btn-ink); background:var(--b); border:2px solid var(--edge); box-shadow:inset -3px -3px 0 rgba(0,0,0,.25), inset 3px 3px 0 rgba(255,255,255,.38)}
+
+/* ---------- intro / complete ---------- */
+.chip-tag{display:inline-block; font-family:var(--ui); font-size:21px; background:var(--accent); color:var(--btn-ink); padding:4px 16px; border:3px solid var(--edge)}
+.intro h2,.done-screen h2{font-family:var(--pix); font-size:clamp(36px,7vw,56px); margin:14px 0 8px}
+.intro .rule{font-size:21px; max-width:34em}
+.recipe{display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin:22px 0}
+.recipe .op{font-family:var(--ui); font-size:32px; color:var(--ink-dim)}
+.recipe .bigsyl{display:grid; place-items:center; width:110px; height:110px; font-family:var(--body); font-weight:900; font-size:68px; color:var(--btn-ink); background:var(--accent); border:4px solid var(--edge); box-shadow:inset -6px -6px 0 rgba(0,0,0,.25), inset 6px 6px 0 rgba(255,255,255,.38)}
+.recipe .rr{font-weight:900; font-family:var(--ui); font-size:30px; color:var(--v)}
+.fourhouses{display:flex; gap:18px; flex-wrap:wrap; margin:20px 0}
+.fourhouses figure{margin:0; display:flex; flex-direction:column; gap:6px; align-items:center; font-family:var(--ui); font-size:17px}
+.fourhouses .board{width:92px}
+.twohouses{display:flex; gap:26px; flex-wrap:wrap; margin:20px 0}
+.twohouses .grp{display:flex; align-items:center; gap:14px}
+.twohouses .grp p{font-size:17px}
+.twohouses .grp b{font-family:var(--ui); font-size:20px; display:block}
+.step-actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:10px}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  .panel{padding:16px}
+  .tile{width:54px; height:54px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important; transition:none!important}
+}
 </style>
 </head>
 <body>
-<main class="wrap">
-  <h1>Spanish Class Games</h1>
-  <p class="sub">Pick this week’s activity. Turn on your sound.</p>
+<div class="sky" aria-hidden="true">
+  <div class="cloud" style="top:7%;left:6%"></div>
+  <div class="cloud" style="top:16%;right:8%;transform:scale(.8)"></div>
+  <div class="cloud" style="top:44%;left:48%;transform:scale(.6);opacity:.7"></div>
+  <div class="island" style="top:28%;left:-30px"></div>
+  <div class="island" style="top:52%;right:-40px;transform:scale(.8)"></div>
+</div>
+<div class="ground" aria-hidden="true"></div>
+<main id="app"></main>
 
-  <!-- To add a new week, copy this whole <section> block, paste it above, and change the text and links. -->
-  <section class="week">
-    <h2>Week 8: ¿Qué hora es?</h2>
-    <p>Telling time to the hour</p>
-    <div class="links">
-      <a class="btn primary" href="week8-que-hora-es.html">⏰ Classwork</a>
-      <a class="btn secondary" href="week8-practice-clock.html">🕒 Practice clock</a>
-    </div>
-  </section>
-</main>
+<script>
+(function(){
+'use strict';
+
+/* ================= Hangul data ================= */
+const INI=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const VOW=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const FIN=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+function compose(i,v,f){return String.fromCharCode(0xAC00+((INI.indexOf(i)*21)+VOW.indexOf(v))*28+FIN.indexOf(f||''));}
+
+const SND_I={'ㄱ':'g','ㄴ':'n','ㄷ':'d','ㄹ':'r','ㅁ':'m','ㅂ':'b','ㅅ':'s','ㅇ':'','ㅈ':'j','ㅊ':'ch','ㅋ':'k','ㅌ':'t','ㅍ':'p','ㅎ':'h'};
+const SND_F={'ㄱ':'k','ㄴ':'n','ㄷ':'t','ㄹ':'l','ㅁ':'m','ㅂ':'p','ㅅ':'t','ㅇ':'ng','ㅈ':'t','ㅊ':'t','ㅋ':'k','ㅌ':'t','ㅍ':'p','ㅎ':'t'};
+const SND_V={'ㅏ':'a','ㅑ':'ya','ㅓ':'eo','ㅕ':'yeo','ㅗ':'o','ㅛ':'yo','ㅜ':'u','ㅠ':'yu','ㅡ':'eu','ㅣ':'i','ㅐ':'ae','ㅔ':'e','ㅘ':'wa','ㅝ':'wo','ㅟ':'wi','ㅢ':'ui'};
+const COMP={'ㅘ':['ㅗ','ㅏ'],'ㅝ':['ㅜ','ㅓ'],'ㅟ':['ㅜ','ㅣ'],'ㅢ':['ㅡ','ㅣ']};
+const CONS=['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const STAND=['ㅏ','ㅑ','ㅓ','ㅕ','ㅣ','ㅐ','ㅔ'];
+const LIE=['ㅗ','ㅛ','ㅜ','ㅠ','ㅡ'];
+const VOW_ORDER=STAND.concat(LIE);
+const SIB={'ㄱ':'ㅋ','ㅋ':'ㄱ','ㄷ':'ㅌ','ㅌ':'ㄷ','ㅂ':'ㅍ','ㅍ':'ㅂ','ㅈ':'ㅊ','ㅊ':'ㅈ'};
+const shapeOf=v=>STAND.indexOf(v)>=0?'standing':'lying';
+const mk=(i,v,f)=>{f=f||'';return {i:i,v:v,f:f,ch:compose(i,v,f),rom:SND_I[i]+SND_V[v]+(f?SND_F[f]:'')};};
+
+const ROLES={neighbors:['c','v'],bunk:['c','v'],basement:['c','v','f'],hamburger:['c','v','f'],corner:['c','l','s'],cornerbase:['c','l','s','f']};
+const HOUSE={
+  neighbors:{name:'Neighbors',rule:'A standing vowel goes beside the consonant.',color:'#43c0ff'},
+  bunk:{name:'Bunk Bed',rule:'A lying vowel goes below the consonant.',color:'#62e68c'},
+  basement:{name:'Basement',rule:'Neighbors, plus a consonant underneath.',color:'#ff6b8b'},
+  hamburger:{name:'Hamburger',rule:'Bunk Bed, plus a consonant underneath.',color:'#b794ff'},
+  corner:{name:'Corner House',rule:'Two vowels joined: lying part below, standing part beside.',color:'#2dd4bf'},
+  cornerbase:{name:'Corner Basement',rule:'Corner House, plus a consonant underneath.',color:'#e879f9'}
+};
+const layoutFor=it=>shapeOf(it.v)==='standing'?(it.f?'basement':'neighbors'):(it.f?'hamburger':'bunk');
+
+/* ================= Round pools ================= */
+const P1=[mk('ㄱ','ㅏ'),mk('ㄴ','ㅏ'),mk('ㅁ','ㅓ'),mk('ㅇ','ㅣ'),mk('ㅅ','ㅏ'),mk('ㅂ','ㅐ')];
+const P2=[mk('ㄱ','ㅗ'),mk('ㄴ','ㅜ'),mk('ㅁ','ㅗ'),mk('ㅇ','ㅜ'),mk('ㅅ','ㅡ'),mk('ㅎ','ㅛ')];
+const P3A=[mk('ㄱ','ㅏ','ㄴ'),mk('ㅂ','ㅏ','ㅁ'),mk('ㅅ','ㅏ','ㄴ'),mk('ㅅ','ㅣ','ㄴ'),mk('ㄱ','ㅏ','ㅇ'),mk('ㄷ','ㅏ','ㄹ')];
+const P3B=[mk('ㄱ','ㅗ','ㅁ'),mk('ㄴ','ㅜ','ㄴ'),mk('ㅁ','ㅜ','ㄹ'),mk('ㅂ','ㅗ','ㅁ'),mk('ㄱ','ㅗ','ㅇ'),mk('ㄷ','ㅗ','ㄴ')];
+const PV=['ㅏ','ㅗ','ㅓ','ㅜ','ㅣ','ㅡ','ㅐ','ㅛ'].map(v=>({v:v}));
+const PC=[mk('ㅇ','ㅘ'),mk('ㄱ','ㅟ'),mk('ㅇ','ㅢ'),mk('ㅁ','ㅝ'),mk('ㄱ','ㅘ','ㄴ'),mk('ㅇ','ㅝ','ㄴ')];
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+const LEVELS=[
+  {key:'neighbors',tag:'Level 1',name:'Neighbors',layout:'neighbors',mode:'build',color:'#43c0ff',
+   short:'A standing vowel stands beside the consonant.',rounds:()=>P1,
+   rule:'A standing vowel goes beside the consonant, like next-door neighbors.',ex:P1[0],list:STAND,listName:'Standing vowels have a long up-and-down stroke.',
+   note:'ㅇ is silent at the start of a block. It holds the spot so the vowel can speak, so 이 is just “i”.'},
+  {key:'bunk',tag:'Level 2',name:'Bunk Bed',layout:'bunk',mode:'build',color:'#62e68c',
+   short:'A lying vowel goes below the consonant.',rounds:()=>P2,
+   rule:'A lying vowel goes below the consonant, like the bottom bunk.',ex:P2[0],list:LIE,listName:'Lying vowels have a long flat stroke.'},
+  {key:'which',tag:'Warm-up',name:'Which House?',mode:'house',color:'#ffd43b',
+   short:'Look at one vowel and choose its house.',rounds:()=>PV,
+   rule:'You know two houses now. Look at a vowel and decide: does it stand beside the consonant, or lie below it?'},
+  {key:'basement',tag:'Level 3A',name:'Basement',layout:'basement',mode:'build',color:'#ff6b8b',
+   short:'Build Neighbors, then add a consonant underneath.',rounds:()=>P3A,
+   rule:'Build the Neighbors house first. Then add a consonant underneath. The basement only holds a consonant.',ex:P3A[0]},
+  {key:'hamburger',tag:'Level 3B',name:'Hamburger',layout:'hamburger',mode:'build',color:'#ff9f43',
+   short:'The same basement goes under the Bunk Bed.',rounds:()=>P3B,
+   rule:'Surprise: the basement goes under any house. Put it under the Bunk Bed and you get a hamburger. Same green basement, same rule.',ex:P3B[0],anim:true},
+  {key:'boss',tag:'Level 4',name:'Mixed build',mode:'mixed',color:'#b794ff',
+   short:'No house is given. Choose it, then build it.',
+   rounds:()=>shuffle([].concat(shuffle(P1).slice(0,2),shuffle(P2).slice(0,2),shuffle(P3A).slice(0,2),shuffle(P3B).slice(0,2))),
+   rule:'No house is given this time. For each sound, ask two questions: is the vowel standing or lying? Is there a final sound at the end? Then choose the house and build it.'},
+  {key:'corner',tag:'Bonus',name:'Corner House',mode:'corner',color:'#2dd4bf',
+   short:'Two vowels join. One lies below, one stands beside.',rounds:()=>PC,
+   rule:'Some vowels are two vowels joined together. The lying part goes below the consonant and the standing part goes beside it, so the vowel wraps around like a corner.',ex:PC[0]}
+];
+
+/* ================= State ================= */
+const KEY='hbb-v1';
+const app=document.getElementById('app');
+const S={screen:'title',lv:0,round:0,rounds:[],levelEarned:0,levelBlocks:0,
+  progress:{unlocked:0,emeralds:0,world:[],done:[],teacher:false}};
+let R=null;
+
+function load(){try{const t=localStorage.getItem(KEY);if(t){const p=JSON.parse(t);if(p&&typeof p==='object')Object.assign(S.progress,p);}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S.progress));}catch(e){}}
+
+/* small 8-bit success chime, made with the browser's built-in audio (no files) */
+let actx=null;
+function chime(){
+  if(S.progress.muted)return;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    if(!actx)actx=new AC();
+    if(actx.state==='suspended')actx.resume();
+    const t=actx.currentTime;
+    [[659.25,0],[880,0.09],[1318.5,0.18]].forEach(function(n){
+      const o=actx.createOscillator(),g=actx.createGain(),s=t+n[1];
+      o.type='square';o.frequency.value=n[0];
+      g.gain.setValueAtTime(0.0001,s);
+      g.gain.exponentialRampToValueAtTime(0.06,s+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001,s+0.16);
+      o.connect(g);g.connect(actx.destination);
+      o.start(s);o.stop(s+0.18);
+    });
+  }catch(e){}
+}
+
+/* tiny effects: pick up, place, and gentle "not quite" */
+function tone(f,s,d,type,v,f2){
+  const t=actx.currentTime+s,o=actx.createOscillator(),g=actx.createGain();
+  o.type=type;o.frequency.setValueAtTime(f,t);
+  if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(v,t+0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+  o.connect(g);g.connect(actx.destination);
+  o.start(t);o.stop(t+d+0.02);
+}
+function sfx(kind){
+  if(S.progress.muted)return;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    if(!actx)actx=new AC();
+    if(actx.state==='suspended')actx.resume();
+    if(kind==='pick')tone(900,0,0.05,'square',0.035);
+    else if(kind==='place'){tone(190,0,0.12,'triangle',0.12,75);tone(430,0,0.04,'square',0.035);}
+    else if(kind==='bad'){tone(230,0,0.15,'triangle',0.09,160);tone(170,0.1,0.2,'triangle',0.08,115);}
+    else if(kind==='level'){
+      [[523.25,0],[659.25,0.13],[783.99,0.26],[1046.5,0.39]].forEach(function(n){tone(n[0],n[1],0.15,'square',0.05);});
+      [523.25,659.25,783.99,1046.5].forEach(function(f){tone(f,0.58,0.75,'triangle',0.06);});
+      tone(2093,0.6,0.3,'square',0.02);
+    }
+  }catch(e){}
+}
+
+/* ================= Helpers ================= */
+const roleLabel=(role,layout)=>role==='c'?'consonant':role==='f'?'basement':role==='l'?'lying part':role==='s'?'standing part':((layout==='neighbors'||layout==='basement')?'standing vowel':'lying vowel');
+const needOf=(role)=>role==='c'?R.item.i:role==='v'?R.item.v:role==='l'?COMP[R.item.v][0]:role==='s'?COMP[R.item.v][1]:R.item.f;
+const sndC=c=>c==='ㅇ'?'silent':c==='ㄹ'?'r/l':SND_I[c];
+
+function boardHTML(layout,fill,o){
+  o=o||{};fill=fill||{};
+  return '<div class="board '+(o.small?'small ':'')+(o.mini?'mini ':'')+(o.good?'good ':'')+'" data-layout="'+layout+'">'+
+  ROLES[layout].map(function(r){
+    const j=fill[r];
+    const cls='slot role-'+r+(j?' filled':' empty')+(o.wrong&&o.wrong.has(r)?' wrong':'')+(o.shake&&o.shake.has(r)?' shake':'')+(o.dropF&&r==='f'?' drop':'')+(o.armed&&!j?' armed':'');
+    const lab=roleLabel(r,layout);
+    const inner=o.mini?'':(j?'<span class="j">'+j+'</span>':'<span class="lbl">'+lab+'</span>');
+    if(o.interactive){
+      return '<button type="button" class="'+cls+'" data-action="slot" data-role="'+r+'" aria-label="'+lab+' slot, '+(j?'holds '+j:'empty')+'">'+inner+'</button>';
+    }
+    return '<div class="'+cls+'" data-role="'+r+'">'+inner+'</div>';
+  }).join('')+'</div>';
+}
+function tileHTML(kind,j,extra){return '<button type="button" class="tile '+kind+(extra||'')+'" draggable="true" data-action="tile" data-kind="'+kind+'" data-j="'+j+'" aria-label="'+(kind==='v'?'vowel ':'consonant ')+j+'">'+j+'</button>';}
+function eq(it){
+  return it.i+' ('+sndC(it.i)+') + '+it.v+' ('+SND_V[it.v]+(COMP[it.v]?', made of '+COMP[it.v][0]+' + '+COMP[it.v][1]:'')+')'+(it.f?' + '+it.f+' ('+SND_F[it.f]+')':'')+' = '+it.ch+' ('+it.rom+')';
+}
+function worldHTML(){
+  const w=S.progress.world;
+  return '<aside class="panel world" style="--accent:#62e68c"><h3>Your world</h3>'+
+  '<p class="dim">'+(w.length?w.length+(w.length===1?' block':' blocks')+' built so far. Every block you finish stays here.':'Every block you finish gets placed here.')+'</p>'+
+  (w.length?'<div class="wall" aria-label="Blocks you built">'+w.slice(-60).map(function(b){return '<span class="wb" style="--b:'+HOUSE[b.l].color+'">'+b.c+'</span>';}).join('')+'</div>':'')+
+  '</aside>';
+}
+function chartHTML(){
+  return '<details class="chart"><summary>Letter chart</summary>'+
+  '<div class="grid">'+CONS.map(function(c){return '<span class="cell cc"><b>'+c+'</b>'+(c==='ㅇ'?'silent':c==='ㄹ'?'r/l':SND_I[c])+'</span>';}).join('')+'</div>'+
+  '<div class="grid">'+VOW_ORDER.map(function(v){return '<span class="cell vv"><b>'+v+'</b>'+SND_V[v]+'</span>';}).join('')+'</div>'+
+  '<p class="dim" style="font-size:15px">In this game the basement uses ㄴ n, ㄹ l, ㅁ m, ㅇ ng.</p></details>';
+}
+
+/* ================= Screens ================= */
+function titleHTML(){
+  const P=S.progress;
+  const stops=LEVELS.map(function(L,i){
+    const open=P.teacher||i<=P.unlocked;
+    const done=P.done.indexOf(L.key)>=0;
+    const icon=(L.layout||L.mode==='corner')?boardHTML(L.layout||'corner',{},{mini:true}):'<span class="qmini">'+(L.mode==='house'?'?':'★')+'</span>';
+    return '<button type="button" class="stop" style="--stop:'+L.color+'" data-action="open-level" data-i="'+i+'" '+(open?'':'disabled')+'>'+icon+
+      '<span><h3>'+L.name+'</h3><p>'+L.short+'</p><p class="st">'+(done?'Done':open?'Ready':'Locked')+'</p></span></button>';
+  }).join('');
+  return '<section class="panel hero"><h1 class="logo"><span class="a">HANGUL</span><span class="b">BLOCK</span> <span class="c">BUILDER</span></h1>'+
+    '<p class="tag">Build it. Read it. Level up.</p>'+
+    '<div class="demo" aria-label="Example: ㄱ plus ㅏ makes 가, read as ga"><span class="tile c big snapL">ㄱ</span><span class="op">+</span><span class="tile v big snapR">ㅏ</span><span class="op">=</span>'+
+    '<span class="fusedwrap"><span class="tile big fused" style="--b:#ff6b8b">가</span></span><span class="rom fusedwrap">ga</span></div></section>'+
+    '<section class="panel" style="--accent:#ffd43b"><h2 style="font-size:30px">Choose a level</h2><div class="stops">'+stops+'</div>'+
+    '<div class="foot"><span class="dim" style="align-self:center"><span class="gem"></span>'+P.emeralds+' emeralds</span>'+
+    '<button type="button" class="link" data-action="teacher" aria-pressed="'+P.teacher+'">Teacher mode: unlock all levels ('+(P.teacher?'on':'off')+')</button>'+
+    '<button type="button" class="link" data-action="reset">'+(S.confirmReset?'Tap again to erase progress':'Reset progress')+'</button></div></section>'+
+    worldHTML();
+}
+
+function introHTML(){
+  const L=LEVELS[S.lv];
+  let body='';
+  if(L.mode==='build'){
+    const ex=L.ex;
+    body='<div class="recipe"><span class="tile c big">'+ex.i+'</span><span class="op">+</span><span class="tile v big">'+ex.v+'</span>'+(ex.f?'<span class="op">+</span><span class="tile f big">'+ex.f+'</span>':'')+
+      '<span class="op">=</span>'+boardHTML(L.layout,{c:ex.i,v:ex.v,f:ex.f||undefined},{small:true,dropF:!!L.anim})+
+      '<span class="op">→</span><span class="bigsyl" style="background:'+L.color+'">'+ex.ch+'</span><span class="rr">'+ex.rom+'</span></div>';
+    if(L.list){body+='<p>'+L.listName+'</p><div class="chips">'+L.list.map(function(v){return '<span class="chip v">'+v+'</span>';}).join('')+'</div>';}
+    if(L.note){body+='<div class="tip">'+L.note+'</div>';}
+    if(L.key==='basement'||L.key==='hamburger'){body+='<div class="tip">The basement slot can only hold a consonant.</div><div class="tip">In this game the basement letters are ㄴ ㅁ ㅇ ㄹ. At the bottom they say n, m, ng, l.</div>';}
+  }else if(L.mode==='house'){
+    body='<div class="twohouses"><div class="grp">'+boardHTML('neighbors',{},{mini:true})+'<p><b style="color:#43c0ff">Neighbors</b>Standing vowels: ㅏ ㅓ ㅣ</p></div>'+
+      '<div class="grp">'+boardHTML('bunk',{},{mini:true})+'<p><b style="color:#62e68c">Bunk Bed</b>Lying vowels: ㅗ ㅜ ㅡ</p></div></div>';
+  }else if(L.mode==='corner'){
+    const ex=L.ex;
+    body='<div class="recipe"><span class="tile v big">ㅗ</span><span class="op">+</span><span class="tile v big">ㅏ</span><span class="op">=</span><span class="tile v big">ㅘ</span><span class="rr">wa</span></div>'+
+      '<div class="recipe">'+boardHTML('corner',{c:'ㅇ',l:'ㅗ',s:'ㅏ'},{small:true})+'<span class="op">→</span><span class="bigsyl" style="background:'+L.color+'">'+ex.ch+'</span><span class="rr">'+ex.rom+'</span></div>'+
+      '<div class="tip">Lying parts go below the consonant: ㅗ ㅜ ㅡ. Standing parts go on the right, beside it: ㅏ ㅓ ㅣ.</div>'+
+      '<div class="tip">A basement still goes underneath. 관 is ㄱ + ㅘ + ㄴ.</div>';
+  }else{
+    body='<div class="fourhouses">'+['neighbors','bunk','basement','hamburger'].map(function(h){return '<figure>'+boardHTML(h,{},{mini:true})+'<span style="color:'+HOUSE[h].color+'">'+HOUSE[h].name+'</span></figure>';}).join('')+'</div>';
+  }
+  return '<section class="panel intro" style="--accent:'+L.color+'"><span class="chip-tag">'+L.tag+'</span><h2>'+L.name+'</h2><p class="rule">'+L.rule+'</p>'+body+
+    '<div class="step-actions"><button type="button" class="btn" data-action="begin">Start building</button><button type="button" class="btn quiet" data-action="menu">Back to levels</button></div></section>';
+}
+
+function hudHTML(L){
+  const pills=S.rounds.map(function(_,i){return '<span class="pill'+(i<S.round?' on':'')+(i===S.round?' now on':'')+'"></span>';}).join('');
+  return '<header class="hud"><button type="button" class="btn quiet" data-action="menu">Levels</button><div class="lv">'+L.tag+': '+L.name+'</div>'+
+    '<div class="pills" role="img" aria-label="Block '+(S.round+1)+' of '+S.rounds.length+'">'+pills+'</div>'+
+    '<button type="button" class="btn quiet" data-action="mute" aria-pressed="'+!!S.progress.muted+'">Sound: '+(S.progress.muted?'off':'on')+'</button>'+
+    '<div class="score"><span class="gem"></span>'+S.progress.emeralds+'</div></header>';
+}
+function msgHTML(){return R.msg?'<div class="msg '+R.msg.k+'" role="status" aria-live="polite">'+R.msg.t+'</div>':'<div class="msg info" role="status" aria-live="polite"></div>';}
+
+function houseChoicesHTML(options){
+  return '<div class="houses">'+options.map(function(h){
+    return '<button type="button" class="house" style="--hc:'+HOUSE[h].color+'" data-action="pick-house" data-h="'+h+'">'+boardHTML(h,{},{mini:true})+'<span><b>'+HOUSE[h].name+'</b><span>'+HOUSE[h].rule+'</span></span></button>';
+  }).join('')+'</div>';
+}
+
+function playHTML(){
+  const L=LEVELS[S.lv];
+  let task='',stage='';
+  if(L.mode==='house'){
+    task='<div class="task"><p class="ask">Which house does this vowel live in?</p><div style="display:flex;gap:16px;align-items:center;margin-top:8px"><span class="tile v big">'+R.item.v+'</span><span class="rom" style="font-family:var(--ui);font-size:38px;color:var(--v)">'+SND_V[R.item.v]+'</span></div></div>';
+    if(R.phase==='house'){stage=houseChoicesHTML(['neighbors','bunk']);}
+    else{
+      const hh=shapeOf(R.item.v)==='standing'?'neighbors':'bunk';
+      stage='<div class="reveal"><span class="tile v big">'+R.item.v+'</span><div><p class="rom-big" style="font-size:30px">'+R.item.v+' is '+shapeOf(R.item.v)+'.</p><p class="eq">It lives in the '+HOUSE[hh].name+': '+(hh==='neighbors'?'beside':'below')+' the consonant.</p><p class="earn"><span class="gem"></span>+'+R.earn+' '+(R.earn===1?'emerald':'emeralds')+'</p><button type="button" class="btn" data-action="next">'+(S.round>=S.rounds.length-1?'Finish level':'Next vowel')+'</button></div></div>';
+    }
+  }else{
+    task='<div class="task"><p class="ask">'+(R.phase==='house'?'Which house builds this sound?':'Build the sound')+'</p><div class="romtxt">'+R.item.rom+'</div>'+
+      (R.phase==='build'&&R.item.i==='ㅇ'?'<div class="tip">This sound starts with a vowel. Start the block with the silent ㅇ.</div>':'')+'</div>';
+    if(R.phase==='house'){stage=houseChoicesHTML(['neighbors','bunk','basement','hamburger']);}
+    else{
+      const done=R.phase==='done';
+      const board='<div class="boardwrap">'+boardHTML(R.layout,R.slots,{interactive:!done,wrong:R.wrong,shake:R.shake,good:done,armed:!!R.selected})+
+        ((L.mode==='mixed'||L.mode==='corner')?'<p class="dim" style="margin-top:8px;text-align:center;font-family:var(--ui)">'+HOUSE[R.layout].name+'</p>':'')+'</div>';
+      let right='';
+      if(!done){
+        const hint=R.hintTile;
+        right='<div class="bank"><h3>Consonants</h3><div class="tiles">'+R.bank.cs.map(function(c){return tileHTML('c',c,(R.selected&&R.selected.j===c&&R.selected.kind==='c'?' sel':'')+(hint&&hint.kind==='c'&&hint.j===c?' hint':''));}).join('')+'</div>'+
+          '<h3>Vowels</h3><div class="tiles">'+R.bank.vs.map(function(v){return tileHTML('v',v,(R.selected&&R.selected.j===v&&R.selected.kind==='v'?' sel':'')+(hint&&hint.kind==='v'&&hint.j===v?' hint':''));}).join('')+'</div></div>';
+      }
+      stage='<div class="stage">'+board+'<div>'+right+'</div></div>';
+      if(done){
+        stage+='<div class="reveal"><div class="big" style="--b:'+HOUSE[R.layout].color+'">'+R.item.ch+'</div><div><p class="rom-big">'+R.item.rom+'</p><p class="eq">'+eq(R.item)+'</p><p class="earn"><span class="gem"></span>+'+R.earn+' '+(R.earn===1?'emerald':'emeralds')+'. Built as a '+HOUSE[R.layout].name+'.</p><button type="button" class="btn" data-action="next">'+(S.round>=S.rounds.length-1?'Finish level':'Next block')+'</button></div></div>';
+      }
+    }
+  }
+  const acts=R.phase==='done'?'':'<div class="actions"><button type="button" class="btn quiet" data-action="hint">Hint</button>'+(R.phase==='build'?'<button type="button" class="btn quiet" data-action="clear">Clear board</button>':'')+'</div>';
+  return '<section class="panel play" style="--accent:'+L.color+'">'+hudHTML(L)+task+stage+(R.phase==='done'&&L.mode!=='house'?'':msgHTML())+acts+chartHTML()+'</section>'+worldHTML();
+}
+
+function completeHTML(){
+  const L=LEVELS[S.lv];const last=S.lv>=LEVELS.length-1;
+  return '<section class="panel done-screen" style="--accent:'+L.color+'"><span class="chip-tag">'+L.tag+' complete</span><h2>'+(last?'You built them all':'Nice building')+'</h2>'+
+    '<p class="rule">'+(L.mode==='house'?'You sorted '+S.rounds.length+' vowels into their houses.':'You built '+S.levelBlocks+' blocks and earned '+S.levelEarned+' emeralds.')+' '+(last?'You can now build every Hangul block layout: Neighbors, Bunk Bed, Basement, Hamburger, and the Corner House.':'')+'</p>'+
+    '<div class="step-actions" style="margin-top:20px">'+(last?'':'<button type="button" class="btn" data-action="next-level">Next level</button>')+
+    '<button type="button" class="btn quiet" data-action="replay">Play again</button><button type="button" class="btn quiet" data-action="menu">Back to levels</button></div></section>'+worldHTML();
+}
+
+function render(){
+  let h='';
+  if(S.screen==='title')h=titleHTML();
+  else if(S.screen==='intro')h=introHTML();
+  else if(S.screen==='play')h=playHTML();
+  else h=completeHTML();
+  app.innerHTML=h;
+  if(R)R.shake=null;
+}
+
+/* ================= Game flow ================= */
+function buildBank(){
+  const it=R.item;const cs=[it.i];if(it.f&&cs.indexOf(it.f)<0)cs.push(it.f);
+  if(SIB[it.i]&&cs.indexOf(SIB[it.i])<0)cs.push(SIB[it.i]);
+  const rest=shuffle(CONS.filter(function(c){return cs.indexOf(c)<0;}));
+  while(cs.length<7&&rest.length)cs.push(rest.pop());
+  const vs=COMP[it.v]?['ㅏ','ㅓ','ㅣ','ㅗ','ㅜ','ㅡ']:[it.v];
+  const same=shuffle((shapeOf(it.v)==='standing'?STAND:LIE).filter(function(v){return v!==it.v;})).slice(0,2);
+  const opp=shuffle((shapeOf(it.v)==='standing'?LIE:STAND)).slice(0,1);
+  [].concat(same,opp).forEach(function(v){vs.push(v);});
+  R.bank={cs:CONS.filter(function(c){return cs.indexOf(c)>=0;}),vs:VOW_ORDER.filter(function(v){return vs.indexOf(v)>=0;})};
+}
+function startRound(){
+  const L=LEVELS[S.lv];const item=S.rounds[S.round];
+  R={item:item,misses:0,hm:0,hinted:false,selected:null,slots:{},wrong:new Set(),shake:null,msg:null,phase:'build',layout:L.layout||null,hintTile:null,earn:0};
+  if(L.mode==='corner')R.layout=item.f?'cornerbase':'corner';
+  if(L.mode==='house'||L.mode==='mixed'){R.phase='house';R.msg={k:'info',t:L.mode==='house'?'Look at the vowel’s long stroke, then pick a house.':'Ask two questions: standing or lying vowel? Final sound or not?'};}
+  else{buildBank();R.msg={k:'info',t:'Tap a tile, then tap a slot on the board. You can also drag.'};}
+}
+function award(){
+  R.earn=Math.max(1,3-R.misses-(R.hinted?1:0));
+  S.progress.emeralds+=R.earn;S.levelEarned+=R.earn;
+}
+function finishBuild(){
+  R.phase='done';award();S.levelBlocks++;chime();
+  S.progress.world.push({c:R.item.ch,l:R.layout});
+  if(S.progress.world.length>200)S.progress.world.shift();
+  save();
+}
+function explainWrong(role,j){
+  const it=R.item;
+  if(role==='c'){
+    if(it.i==='ㅇ')return 'This block starts with a vowel sound, so the consonant slot needs the silent ㅇ.';
+    if(j==='ㅇ')return 'ㅇ is silent at the start. This block needs “'+sndC(it.i)+'”.';
+    return j+' says “'+sndC(j)+'”, but this block needs “'+sndC(it.i)+'”.';
+  }
+  if(role==='v')return j+' says “'+SND_V[j]+'”, but this block needs “'+SND_V[it.v]+'”.';
+  if(role==='l'||role==='s')return j+' isn’t part of this vowel. Which two vowels blend to make “'+SND_V[it.v]+'”?';
+  return j+' says “'+SND_F[j]+'” in the basement, but this block ends with “'+SND_F[it.f]+'”.';
+}
+function check(){
+  const need=ROLES[R.layout];
+  const bad=need.filter(function(r){return R.slots[r]!==needOf(r);});
+  if(!bad.length){R.msg=null;sfx('place');finishBuild();return;}
+  R.misses++;R.wrong=new Set(bad);R.shake=new Set(bad);
+  sfx('bad');R.msg={k:'bad',t:bad.slice(0,2).map(function(r){return explainWrong(r,R.slots[r]);}).join(' ')+' Tap a wrong block to replace it.'};
+}
+function place(role,kind,j){
+  R.selected=null;R.hintTile=null;
+  const want=(role==='c'||role==='f')?'c':'v';
+  if(kind!==want){
+    R.misses++;
+    sfx('bad');R.msg={k:'bad',t:(role!=='c'&&role!=='f')?'That slot is for a vowel.':role==='f'?'The basement can only hold a consonant.':'The top slot needs a consonant.'};
+    render();return;
+  }
+  if(role==='v'){
+    const needs=(R.layout==='neighbors'||R.layout==='basement')?'standing':'lying';
+    if(shapeOf(j)!==needs){
+      R.misses++;
+      sfx('bad');R.msg={k:'bad',t:shapeOf(j)==='lying'?j+' is lying down. Lying vowels go below the consonant, in the Bunk Bed or the Hamburger.':j+' is standing up. Standing vowels go beside the consonant, in Neighbors or the Basement.'};
+      render();return;
+    }
+  }
+  if((role==='l'&&shapeOf(j)!=='lying')||(role==='s'&&shapeOf(j)!=='standing')){
+    R.misses++;
+    sfx('bad');R.msg={k:'bad',t:role==='l'?j+' is standing up. The bottom part of the corner is for a lying vowel.':j+' is lying down. The side part of the corner is for a standing vowel.'};
+    render();return;
+  }
+  R.slots[role]=j;R.wrong.delete(role);R.msg=null;
+  if(ROLES[R.layout].every(function(r){return R.slots[r];}))check();else sfx('place');
+  render();
+}
+function pickHouse(h){
+  if(R.phase!=='house')return;
+  const L=LEVELS[S.lv];const it=R.item;
+  if(L.mode==='house'){
+    const right=shapeOf(it.v)==='standing'?'neighbors':'bunk';
+    if(h===right){R.phase='done';award();chime();save();}
+    else{
+      R.misses++;R.hm++;
+      sfx('bad');R.msg={k:'bad',t:R.hm<2?'Not quite. Does the vowel stand up or lie flat?':it.v+' is '+shapeOf(it.v)+'. '+(shapeOf(it.v)==='standing'?'Standing vowels go beside the consonant.':'Lying vowels go below the consonant.')};
+    }
+    render();return;
+  }
+  const right=layoutFor(it);
+  if(h===right){
+    R.layout=h;R.phase='build';R.hm=0;buildBank();sfx('place');
+    R.msg={k:'good',t:'Yes. '+it.v+' is '+shapeOf(it.v)+' and '+(it.f?'there is a final sound':'there is no final sound')+', so this is a '+HOUSE[h].name+'. Now build it.'};
+  }else{
+    R.misses++;R.hm++;
+    sfx('bad');R.msg={k:'bad',t:R.hm<2?'Not quite. Ask: is the vowel standing or lying? Is there a final sound at the end?':
+      'The vowel sound “'+SND_V[it.v]+'” is '+it.v+', and it is '+shapeOf(it.v)+'. '+(it.f?'The “'+SND_F[it.f]+'” at the end needs a basement.':'Nothing is left at the end, so there is no basement.')};
+  }
+  render();
+}
+function hint(){
+  if(!R||R.phase==='done')return;
+  const it=R.item;R.hinted=true;
+  if(R.phase==='house'){
+    R.msg={k:'tip',t:it.f!==undefined&&LEVELS[S.lv].mode==='mixed'?
+      'The vowel sound “'+SND_V[it.v]+'” is '+it.v+', and it is '+shapeOf(it.v)+'. '+(it.f?'There is a sound at the end, too.':'Nothing comes after the vowel.'):
+      it.v+' is '+shapeOf(it.v)+'. '+(shapeOf(it.v)==='standing'?'Standing vowels stand beside the consonant.':'Lying vowels go below the consonant.')};
+    render();return;
+  }
+  const role=ROLES[R.layout].filter(function(r){return R.slots[r]!==needOf(r);})[0];
+  if(!role)return;
+  R.hintTile={kind:(role==='c'||role==='f')?'c':'v',j:needOf(role)};
+  const lab=roleLabel(role,R.layout);
+  R.msg={k:'tip',t:(role==='c'&&it.i==='ㅇ')?'Hint: this block starts with a vowel sound, so the consonant slot needs the silent letter. Look for the glowing tile.':
+    'Hint: the '+lab+' slot needs the “'+(role==='c'?sndC(it.i):role==='f'?SND_F[it.f]:SND_V[needOf(role)])+'” sound. Look for the glowing tile.'};
+  render();
+}
+
+function openLevel(i){S.lv=i;S.screen='intro';R=null;render();window.scrollTo(0,0);}
+function begin(){const L=LEVELS[S.lv];S.rounds=L.rounds();S.round=0;S.levelEarned=0;S.levelBlocks=0;startRound();S.screen='play';render();window.scrollTo(0,0);}
+function next(){
+  S.round++;
+  if(S.round>=S.rounds.length){
+    const L=LEVELS[S.lv];
+    if(S.progress.done.indexOf(L.key)<0)S.progress.done.push(L.key);
+    S.progress.unlocked=Math.max(S.progress.unlocked,Math.min(S.lv+1,LEVELS.length-1));
+    save();S.screen='complete';R=null;sfx('level');
+  }else startRound();
+  render();window.scrollTo(0,0);
+}
+
+/* ================= Events ================= */
+app.addEventListener('click',function(e){
+  const t=e.target.closest('[data-action]');if(!t||t.disabled)return;
+  const a=t.dataset.action;
+  if(a!=='reset'&&S.confirmReset){S.confirmReset=false;}
+  switch(a){
+    case 'open-level':openLevel(+t.dataset.i);break;
+    case 'begin':begin();break;
+    case 'menu':S.screen='title';R=null;render();window.scrollTo(0,0);break;
+    case 'next':next();break;
+    case 'next-level':openLevel(Math.min(S.lv+1,LEVELS.length-1));break;
+    case 'replay':openLevel(S.lv);break;
+    case 'pick-house':pickHouse(t.dataset.h);break;
+    case 'hint':hint();break;
+    case 'clear':if(R){R.slots={};R.wrong=new Set();R.selected=null;R.hintTile=null;R.msg={k:'info',t:'Board cleared.'};render();}break;
+    case 'tile':
+      if(!R||R.phase!=='build')break;
+      if(R.selected&&R.selected.j===t.dataset.j){R.selected=null;R.msg=null;}
+      else{sfx('pick');R.selected={kind:t.dataset.kind,j:t.dataset.j};R.msg={k:'info',t:'Now tap a slot on the board.'};}
+      render();break;
+    case 'slot':
+      if(!R||R.phase!=='build')break;
+      if(R.selected)place(t.dataset.role,R.selected.kind,R.selected.j);
+      else if(R.slots[t.dataset.role]){delete R.slots[t.dataset.role];R.wrong.delete(t.dataset.role);R.msg=null;render();}
+      else{R.msg={k:'info',t:'Pick a tile first, then tap a slot.'};render();}
+      break;
+    case 'teacher':S.progress.teacher=!S.progress.teacher;save();render();break;
+    case 'mute':S.progress.muted=!S.progress.muted;save();render();if(!S.progress.muted)chime();break;
+    case 'reset':
+      if(S.confirmReset){S.progress={unlocked:0,emeralds:0,world:[],done:[],teacher:false};S.confirmReset=false;save();}
+      else S.confirmReset=true;
+      render();break;
+  }
+});
+app.addEventListener('dragstart',function(e){
+  const t=e.target.closest&&e.target.closest('.tile[data-action="tile"]');
+  if(!t||!R||R.phase!=='build')return;
+  try{e.dataTransfer.setData('text/plain',t.dataset.kind+':'+t.dataset.j);e.dataTransfer.effectAllowed='copy';sfx('pick');}catch(x){}
+});
+app.addEventListener('dragover',function(e){if(e.target.closest&&e.target.closest('.slot[data-action="slot"]'))e.preventDefault();});
+app.addEventListener('drop',function(e){
+  const s=e.target.closest&&e.target.closest('.slot[data-action="slot"]');
+  if(!s||!R||R.phase!=='build')return;
+  e.preventDefault();
+  let d='';try{d=e.dataTransfer.getData('text/plain');}catch(x){}
+  const p=d.split(':');if(p.length===2&&(p[0]==='c'||p[0]==='v'))place(s.dataset.role,p[0],p[1]);
+});
+
+load();
+render();
+})();
+</script>
 </body>
 </html>
