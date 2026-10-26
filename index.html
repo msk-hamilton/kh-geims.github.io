@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Spanish Class Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F6FB; --surface:#FFFFFF; --ink:#14284B; --muted:#55657F; --line:#D3DCEA;
+  --cobalt:#1D4E89; --on-cobalt:#FFFFFF; --saffron:#F2B705; --on-saffron:#2A1E00;
+  --display:"Baloo 2","Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Verdana","Segoe UI",system-ui,sans-serif;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#0E192C; --surface:#172540; --ink:#EAF0FA; --muted:#A3B4CE; --line:#2A3C5D; --cobalt:#86AEE6; --on-cobalt:#0E192C; color-scheme:dark; }
+}
+:root[data-theme="dark"]{ --bg:#0E192C; --surface:#172540; --ink:#EAF0FA; --muted:#A3B4CE; --line:#2A3C5D; --cobalt:#86AEE6; --on-cobalt:#0E192C; color-scheme:dark; }
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--body); font-size:1.15rem; line-height:1.5}
+.wrap{max-width:760px; margin:0 auto; padding:2rem clamp(1rem,4vw,2rem) 3rem}
+h1{font-family:var(--display); font-size:clamp(2.2rem,7vw,3.2rem); line-height:1; margin:0}
+.sub{color:var(--muted); margin:.4rem 0 2rem}
+.week{background:var(--surface); border:2px solid var(--line); border-radius:20px; padding:1.25rem 1.5rem; margin-bottom:1rem}
+.week h2{font-family:var(--display); font-size:1.7rem; margin:0; line-height:1.1}
+.week p{margin:.3rem 0 1rem; color:var(--muted)}
+.links{display:flex; flex-wrap:wrap; gap:.75rem}
+a.btn{display:inline-flex; align-items:center; gap:.5rem; text-decoration:none; font-weight:700; border-radius:14px; padding:.8rem 1.3rem}
+a.primary{background:var(--cobalt); color:var(--on-cobalt)}
+a.secondary{border:2px solid var(--line); color:var(--ink)}
+a:focus-visible{outline:3px solid var(--saffron); outline-offset:3px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Spanish Class Games</h1>
+  <p class="sub">Pick this week’s activity. Turn on your sound.</p>
+
+  <!-- To add a new week, copy this whole <section> block, paste it above, and change the text and links. -->
+  <section class="week">
+    <h2>Week 8: ¿Qué hora es?</h2>
+    <p>Telling time to the hour</p>
+    <div class="links">
+      <a class="btn primary" href="week8-que-hora-es.html">⏰ Classwork</a>
+      <a class="btn secondary" href="week8-practice-clock.html">🕒 Practice clock</a>
+    </div>
+  </section>
+</main>
+</body>
+</html>
